@@ -8,8 +8,10 @@ import sqlite3
 conn = sqlite3.connect('rmv.db')
 c = conn.cursor()
 
+
 #c.execute("DROP TABLE rmvResults")
 c.execute('''CREATE TABLE IF NOT EXISTS rmvResults(Date TIMESTAMP, RMV REAL)''')
+
 
 def calculateUsedLiters(usedBars, cylinderVolume):
     multiplication = int(usedBars) * int(cylinderVolume)
@@ -21,9 +23,9 @@ def calcLitersPerMinute(usedLiters, divingTime):
 
 def calculateRMV(litersPerMinute, mediumPressure):
     dividing = int(litersPerMinute) / float(mediumPressure)
-    return dividing
+    return round(dividing, 2)
 
-def showProgress():
+def showDatabase():
     for row in c.execute('SELECT * FROM rmvResults'):
         print (row)
 
@@ -33,15 +35,15 @@ print('Used liters: ', usedLiters)
 litersPerMinute = calcLitersPerMinute(usedLiters, argv[3])
 print('Used liters per minute: ', litersPerMinute)
 
-Rmv = round(calculateRMV(litersPerMinute, argv[4]), 2)
-print('Your RMV: ', Rmv)
+Rmv = calculateRMV(litersPerMinute, argv[4])
+print('Your RMV: ', Rmv, ' liters per minute')
 
 insertQuery = """INSERT INTO rmvResults VALUES(?,?)"""
 c.execute(insertQuery, (date.today(), Rmv))
 conn.commit()
 
-showProgress()
+showDatabase()
 conn.close()
 
-#with open('results.txt', 'a') as save_result:
-    #save_result.write('In ' + str(date.today()) + ' was ' + str(Rmv) + ' liters per minute\n')
+with open('results.txt', 'a') as save_result:
+    save_result.write('In ' + str(date.today()) + ' was ' + str(Rmv) + ' liters per minute\n')
