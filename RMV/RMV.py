@@ -2,12 +2,14 @@
 
 from sys import argv
 from datetime import date
+import datetime
 import sqlite3
 
 conn = sqlite3.connect('rmv.db')
 c = conn.cursor()
 
-# c.execute('''CREATE TABLE rmvResults(data TEXT, rmv REAL)''')
+#c.execute("DROP TABLE rmvResults")
+c.execute('''CREATE TABLE IF NOT EXISTS rmvResults(Date TIMESTAMP, RMV REAL)''')
 
 def calculateUsedLiters(usedBars, cylinderVolume):
     multiplication = int(usedBars) * int(cylinderVolume)
@@ -20,10 +22,6 @@ def calcLitersPerMinute(usedLiters, divingTime):
 def calculateRMV(litersPerMinute, mediumPressure):
     dividing = int(litersPerMinute) / float(mediumPressure)
     return dividing
-
-def saveResult():
-    c.execute("""INSERT INTO rmvResults VALUES('date.today()', 'Rmv')""")
-    conn.commit()
 
 def showProgress():
     for row in c.execute('SELECT * FROM rmvResults'):
@@ -38,7 +36,10 @@ print('Used liters per minute: ', litersPerMinute)
 Rmv = round(calculateRMV(litersPerMinute, argv[4]), 2)
 print('Your RMV: ', Rmv)
 
-saveResult()
+insertQuery = """INSERT INTO rmvResults VALUES(?,?)"""
+c.execute(insertQuery, (date.today(), Rmv))
+conn.commit()
+
 showProgress()
 conn.close()
 
