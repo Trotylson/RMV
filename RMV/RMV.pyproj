@@ -21,7 +21,20 @@
     <EnableUnmanagedDebugging>false</EnableUnmanagedDebugging>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="calculate.py">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="DbConnect.py">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="RMV.py" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Db.Persistance\Db.Persistance.pyproj">
+      <Name>Db.Persistance</Name>
+      <Project>{80518185-b64f-4bba-b5c3-8435d94f3d60}</Project>
+      <Private>True</Private>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)\Python Tools\Microsoft.PythonTools.targets" />
   <!-- Uncomment the CoreCompile target to enable the Build command in
